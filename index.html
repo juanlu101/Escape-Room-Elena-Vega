@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El rastro de Elena Vega</title>
+<meta name="description" content="Escape room para 4.º de ESO: seguid el rastro digital de una periodista desaparecida.">
+<meta name="author" content="Juan Luis Torralbo Muñoz">
+<meta name="theme-color" content="#15110E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='6' fill='%2314181B'/%3E%3Ctext x='20' y='27' text-anchor='middle' font-family='Arial' font-weight='800' font-size='17' fill='%23F4E04A'%3EEV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6E9E7;
+  --paper:#FAFBFA;
+  --manila:#E9D9A6;
+  --manila-2:#DCC88C;
+  --ink:#14181B;
+  --ink-2:#4A5358;
+  --rule:#C8CECB;
+  --cobalt:#1F4FD8;
+  --cobalt-2:#173FB0;
+  --hl:#F4E04A;
+  --red:#D23B2E;
+  --term:#0F1417;
+  --term-ink:#E3E8E6;
+  --term-acc:#86A8FF;
+  --ok:#2E8B57;
+  --sans:'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --mono:'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --hdr:74px;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.58;background:var(--bg);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(circle at 1px 1px,rgba(20,24,27,.08) 1px,transparent 0);background-size:22px 22px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px}
+.hidden{display:none !important}
+mark{background:linear-gradient(transparent 38%,var(--hl) 38%,var(--hl) 88%,transparent 88%);color:inherit;padding:0 .1em}
+.redact{background:var(--ink);color:transparent;user-select:none;border-radius:1px;padding:0 .2em}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:46px;padding:.5em 1.3em;border-radius:4px;font-weight:700;font-size:1rem;background:var(--cobalt);color:#fff;border:1px solid var(--cobalt-2);transition:background .15s,transform .08s}
+.btn:hover{background:var(--cobalt-2)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--cobalt);border-color:rgba(31,79,216,.45)}
+.btn.ghost:hover{background:rgba(31,79,216,.07)}
+.btn.dark{background:var(--ink);border-color:#000}
+.btn.small{min-height:38px;padding:.3em .9em;font-size:.93rem}
+.iconbtn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--paper);border:1px solid var(--rule);position:relative}
+.iconbtn svg{width:22px;height:22px}
+.field{width:100%;min-height:48px;padding:.5em .8em;border-radius:4px;background:#fff;border:1px solid #AEB6B2;font-size:1.05rem}
+.field:focus{outline:none;border-color:var(--cobalt);box-shadow:0 0 0 3px rgba(31,79,216,.15)}
+.field.code{font-family:var(--mono)}
+.field.shake{animation:shake .4s;border-color:var(--red)}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.sheet{background:var(--paper);border:1px solid var(--rule);border-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05),0 12px 30px rgba(20,24,27,.08)}
+.muted{color:var(--ink-2);font-size:.94rem}
+
+/* Portada */
+#intro{max-width:1180px;margin:0 auto;padding:54px 24px 40px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:48px;align-items:start}
+.case-no{font-family:var(--mono);font-size:.9rem;color:var(--red)}
+.cover h1{margin:.15em 0 .2em;font-weight:800;font-stretch:72%;font-size:clamp(3.4rem,9vw,6.8rem);line-height:.88;letter-spacing:-.015em;text-transform:uppercase}
+.cover h1 span{display:block;color:var(--cobalt)}
+.folder{position:relative;margin-top:30px;background:var(--manila);border-radius:0 6px 6px 6px;padding:28px 30px 26px;box-shadow:0 14px 30px rgba(20,24,27,.14)}
+.folder::before{content:"Expediente OV-2024";position:absolute;top:-30px;left:0;height:30px;padding:5px 18px 0;background:var(--manila);border-radius:6px 6px 0 0;font-family:var(--mono);font-size:.82rem}
+.folder p{margin:0 0 .85em}
+.folder .stamp{position:absolute;right:20px;top:-22px;background:var(--manila);border:3px solid var(--red);color:var(--red);font-weight:800;font-stretch:80%;padding:2px 10px;transform:rotate(7deg);opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+.join{padding:26px}
+.join h2{margin:0 0 .3em;font-weight:800;font-stretch:80%;font-size:1.9rem}
+.join label{display:block;font-weight:600;margin:.4rem 0 .35rem}
+.join .btn{width:100%;margin-top:14px;min-height:54px;font-size:1.15rem}
+.join ul{margin:18px 0 0;padding:14px 0 0 18px;border-top:1px solid var(--rule);font-size:.95rem;color:var(--ink-2)}
+.join li{margin:.35em 0}
+.credit{grid-column:1/-1;text-align:center;color:var(--ink-2);font-size:.92rem;user-select:none}
+
+/* Cabecera */
+#hdr{position:sticky;top:0;z-index:50;height:var(--hdr);display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;padding:0 22px;background:rgba(250,251,250,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+.brand{display:flex;align-items:center;gap:12px;user-select:none}
+.brand .logo{width:40px;height:40px;border-radius:4px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-stretch:70%;font-size:1.05rem}
+.brand b{display:block;font-weight:800;font-stretch:80%;font-size:1.25rem;line-height:1.05}
+.brand small{display:block;color:var(--ink-2);font-size:.82rem}
+.track{display:flex;gap:4px;justify-content:center;align-items:center}
+.track span{flex:0 1 54px;height:8px;border-radius:2px;background:#D3D8D6}
+.track span.done{background:var(--ink)}
+.track span.now{background:var(--hl);box-shadow:0 0 0 1px #B8A51E}
+.track b{font-family:var(--mono);font-size:.82rem;margin-left:10px;font-weight:500;white-space:nowrap}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.clock{position:relative;background:var(--ink);color:#fff;border-radius:4px;padding:6px 14px;font-family:var(--mono);font-size:1.6rem;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.clock.warn{background:#9A5B00}
+.clock.danger{background:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.7}}
+.penalty-fly{position:absolute;right:0;top:100%;font-size:.95rem;color:var(--red);font-weight:700;white-space:nowrap;animation:fly 1.7s ease-out forwards;pointer-events:none}
+@keyframes fly{0%{opacity:0;transform:translateY(-6px)}15%{opacity:1}100%{opacity:0;transform:translateY(22px)}}
+
+/* Juego */
+#game{max-width:1300px;margin:0 auto;padding:28px 22px 120px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:30px;align-items:start}
+.file{position:relative;margin-top:30px}
+.file .tab{position:absolute;top:-30px;left:0;height:30px;padding:5px 16px 0;background:var(--manila);border-radius:6px 6px 0 0;font-family:var(--mono);font-size:.82rem}
+.file .body{background:var(--manila);border-radius:0 6px 6px 6px;padding:22px 24px 24px;box-shadow:0 12px 30px rgba(20,24,27,.12)}
+.stage-title{margin:0 0 .15em;font-weight:800;font-stretch:78%;font-size:clamp(2rem,4.2vw,3rem);line-height:1;letter-spacing:-.01em}
+.sub{font-family:var(--mono);font-size:.85rem;color:var(--ink-2);margin-bottom:16px}
+.doc{background:var(--paper);border:1px solid #D9CC9C;border-radius:3px;padding:18px 20px;margin-bottom:14px}
+.doc h4{margin:0 0 6px;font-size:.82rem;font-family:var(--mono);font-weight:500;color:var(--ink-2)}
+.doc p{margin:0 0 .6em}
+.doc .quote{font-size:1.12rem;font-style:italic}
+.term{background:var(--term);color:var(--term-ink);border-radius:4px;padding:16px 18px;font-family:var(--mono);font-size:1rem;line-height:1.7;margin-bottom:14px;overflow-x:auto}
+.term .p{color:#7D8A90}
+.term .v{color:var(--hl);font-weight:500}
+.term .a{color:var(--term-acc)}
+.answer-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.answer-bar .field{flex:1 1 240px}
+.feedback{min-height:1.5em;margin-top:10px;font-weight:600;color:var(--red)}
+.feedback.ok{color:var(--ok)}
+.toolrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.hintbox{display:grid;gap:8px;margin-top:12px}
+.hint{background:var(--paper);border-left:4px solid var(--hl);padding:10px 14px;border-radius:2px}
+.hint b{display:block;font-size:.88rem;font-family:var(--mono);font-weight:500;color:var(--ink-2)}
+.tokens{display:inline-flex;gap:3px;margin-left:6px}
+.tokens i{width:10px;height:10px;border:1.5px solid currentColor;border-radius:2px;display:inline-block}
+.tokens i.on{background:currentColor}
+.ports{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:10px 0 0;padding:0;list-style:none}
+.ports li{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:1px solid var(--rule);border-radius:3px;font-weight:600}
+.ports li i{font-style:normal;font-family:var(--mono);font-size:.8rem;color:var(--ink-2);margin-left:auto}
+.notes{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:10px}
+.sticky{width:110px;height:100px;background:#FFF07A;box-shadow:0 8px 14px rgba(0,0,0,.18);display:grid;place-items:center;font-weight:800;font-size:2rem;font-stretch:80%;transform:rotate(var(--r))}
+.rgb3{display:grid;gap:10px}
+.rgb3 .doc{border-left:5px solid var(--c);margin:0}
+.ips{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.ips div{font-family:var(--mono);background:var(--term);color:var(--hl);padding:8px 12px;border-radius:3px;text-align:center}
+
+/* Lateral */
+aside.side{position:sticky;top:calc(var(--hdr) + 20px);display:grid;gap:16px}
+.side h3{margin:0 0 8px;font-weight:800;font-stretch:80%;font-size:1.2rem}
+.kit{padding:16px}
+.kit-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kit-grid button{display:flex;align-items:center;gap:8px;text-align:left;padding:10px;border:1px solid var(--rule);border-radius:4px;background:#fff;font-weight:600;font-size:.92rem;min-height:52px;line-height:1.15}
+.kit-grid button:hover{border-color:var(--cobalt);color:var(--cobalt)}
+.kit-grid svg{width:22px;height:22px;flex:none}
+.evid{padding:16px}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.thumbs button{padding:0;border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:#fff;aspect-ratio:3/4;position:relative}
+.thumbs img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.thumbs span{position:absolute;left:0;right:0;bottom:0;background:rgba(20,24,27,.82);color:#fff;font-size:.68rem;font-family:var(--mono);padding:2px 4px}
+
+/* Herramientas */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(15,20,23,.72);display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto;backdrop-filter:blur(3px)}
+.modal{width:100%;max-width:640px;margin:auto;padding:26px 28px;background:var(--paper);border-radius:6px;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.modal.wide{max-width:1100px}
+.modal h2{margin:0 0 .3em;font-weight:800;font-stretch:80%;font-size:1.9rem;line-height:1.05}
+.modal .actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:20px}
+.modal .x{float:right}
+.disc{display:block;margin:0 auto;max-width:380px;width:100%;user-select:none}
+.ctl{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0}
+.ctl output{font-family:var(--mono);font-size:1.6rem;min-width:3ch;text-align:center}
+.mtable{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:4px;font-family:var(--mono)}
+.mtable div{display:flex;justify-content:space-between;padding:4px 8px;border:1px solid var(--rule);border-radius:3px;background:#fff}
+.mtable b{font-family:var(--sans)}
+.bits8{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;text-align:center}
+.bits8 button{height:54px;border-radius:4px;border:1px solid var(--rule);background:#fff;font-family:var(--mono);font-size:1.5rem}
+.bits8 button.on{background:var(--ink);color:#fff}
+.bits8 small{font-family:var(--mono);color:var(--ink-2);font-size:.75rem}
+.binout{display:flex;justify-content:center;gap:16px;align-items:baseline;margin-top:14px;font-family:var(--mono)}
+.binout b{font-size:2.2rem}
+.rgbmix{display:grid;grid-template-columns:1fr 150px;gap:20px;align-items:center}
+.rgbmix label{display:grid;grid-template-columns:24px 1fr 48px;align-items:center;gap:8px;font-family:var(--mono);margin:8px 0}
+.rgbmix input[type=range]{width:100%}
+.rgbmix input[type=number]{width:60px;font-family:var(--mono);border:1px solid var(--rule);border-radius:3px;padding:2px 4px}
+.swatch{width:150px;height:150px;border-radius:6px;border:1px solid var(--rule)}
+.hex{font-family:var(--mono);font-size:1.5rem;text-align:center;margin-top:8px}
+.ipres{margin-top:14px}
+.mapwrap{position:relative;width:100%;border-radius:4px;overflow:hidden;border:1px solid var(--rule);touch-action:none;background:#C8D6D2}
+.mapwrap img{width:100%;display:block;user-select:none;-webkit-user-drag:none}
+.mapwrap canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.maptools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.maptools .seg{display:inline-flex;border:1px solid var(--rule);border-radius:4px;overflow:hidden}
+.maptools .seg button{border:none;background:#fff;padding:.4em .9em;min-height:38px;font-weight:600}
+.maptools .seg button.on{background:var(--ink);color:#fff}
+.swatches{display:flex;gap:4px}
+.swatches button{width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--rule)}
+.swatches button.on{box-shadow:0 0 0 2px var(--ink)}
+.lightbox img{max-width:100%;max-height:78vh;display:block;margin:0 auto;border-radius:3px}
+.reward{text-align:center}
+.reward .log{display:inline-block;text-align:left;margin:12px 0;background:var(--term);color:var(--term-ink);padding:14px 18px;border-radius:4px;font-family:var(--mono);font-size:.95rem;max-width:100%}
+.reward .log .g{color:#7EE0A1}
+.tpanel{display:grid;gap:10px}
+.tpanel .row{display:flex;gap:8px;flex-wrap:wrap}
+.tpanel output{display:block;font-family:var(--mono);color:var(--cobalt);min-height:1.3em}
+
+/* Final */
+#victory{padding:44px 18px 80px}
+.report{max-width:900px;margin:0 auto;padding:40px 46px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;box-shadow:0 30px 60px rgba(20,24,27,.15);position:relative}
+.report .bigstamp{position:absolute;top:30px;right:34px;border:4px double var(--red);color:var(--red);font-weight:800;font-stretch:75%;font-size:1.6rem;text-transform:uppercase;padding:4px 14px;transform:rotate(-8deg);letter-spacing:.04em}
+.report h1{margin:.1em 0 .3em;font-weight:800;font-stretch:72%;font-size:clamp(2.6rem,6.5vw,4.4rem);line-height:.92;text-transform:uppercase}
+.report .meta{font-family:var(--mono);font-size:.88rem;color:var(--ink-2);border-bottom:2px solid var(--ink);padding-bottom:10px}
+.rgrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:28px;margin-top:20px}
+.rstats{border:1px solid var(--ink);padding:14px 16px;align-self:start}
+.rstats h3{margin:0 0 8px;font-weight:800;font-stretch:80%;font-size:1.2rem}
+.rstats dl{display:grid;grid-template-columns:1fr auto;gap:5px 12px;margin:0}
+.rstats dd{margin:0;font-family:var(--mono);text-align:right}
+.rstats .off{border-top:1px solid var(--ink);padding-top:6px;font-weight:800}
+.rstats .code{margin-top:12px;border-top:1px dashed var(--ink);padding-top:10px;text-align:center;font-family:var(--mono)}
+.keys{margin:10px 0 0;padding:0;list-style:none;counter-reset:k}
+.keys li{counter-increment:k;display:grid;grid-template-columns:30px 1fr;gap:8px;padding:5px 0;border-bottom:1px solid var(--rule)}
+.keys li::before{content:counter(k);font-family:var(--mono);color:var(--ink-2)}
+.end-actions{display:flex;justify-content:center;gap:10px;margin-top:26px;flex-wrap:wrap}
+#lost{min-height:calc(100vh - var(--hdr));display:flex;align-items:center;justify-content:center}
+
+@media (max-width:1050px){
+  #game{grid-template-columns:1fr}
+  aside.side{position:static;grid-template-columns:1fr 1fr}
+  #intro{grid-template-columns:1fr;gap:28px;padding:34px 18px}
+  .rgrid{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  #hdr{grid-template-columns:auto auto;height:auto;padding:8px 12px;gap:8px}
+  .track{grid-column:1/-1;grid-row:2}
+  .brand small{display:none}
+  aside.side{grid-template-columns:1fr}
+  .report{padding:28px 20px}
+  .report .bigstamp{position:static;display:inline-block;margin-bottom:10px}
+  .rgbmix{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  #game{padding:20px 12px 100px}
+  .file .body{padding:18px 14px}
+  .brand b{font-size:1.05rem}
+  .clock{font-size:1.25rem}
+  .bits8 button{height:44px;font-size:1.2rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+@media print{#hdr,.end-actions,#overlayRoot{display:none !important}body{background:#fff}}
+
+/* ════════ Piso de Elena: ambientación oscura ════════ */
+:root{--floor:#17120E;--light:#F1E6D2;--light-2:#B8AC98;--tape:#F2C318;--cork:#9C7449}
+html{background:var(--floor)}
+body{color:var(--ink);background-color:var(--floor);background-image:
+  repeating-linear-gradient(90deg,rgba(0,0,0,.38) 0 2px,transparent 2px 230px),
+  repeating-linear-gradient(0deg,#1F1813 0 40px,#120E0B 40px 42px,#251C15 42px 82px,#110D0A 82px 84px,#1C1511 84px 124px,#120E0B 124px 126px);
+  background-attachment:fixed;background-size:auto}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(circle 420px at var(--mx,22%) var(--my,18%),rgba(255,228,170,.13),rgba(255,228,170,.04) 45%,transparent 70%),
+             radial-gradient(ellipse at 50% 40%,transparent 35%,rgba(0,0,0,.65) 100%)}
+#intro,#hdr,#game,#victory{position:relative;z-index:2}
+#hdr{z-index:50}
+#overlayRoot{position:relative;z-index:300}
+/* Decorado */
+#room{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.tape{position:absolute;height:40px;width:85vw;background:var(--tape);box-shadow:0 6px 14px rgba(0,0,0,.5);display:flex;align-items:center;overflow:hidden;white-space:nowrap;
+  background-image:linear-gradient(transparent 4px,rgba(0,0,0,.85) 4px 6px,transparent 6px calc(100% - 6px),rgba(0,0,0,.85) calc(100% - 6px) calc(100% - 4px),transparent calc(100% - 4px))}
+.tape span{font-family:var(--sans);font-weight:800;font-stretch:70%;font-size:1.05rem;letter-spacing:.08em;color:#111;padding-left:20px}
+.tape.t1{top:118px;right:-34vw;transform:rotate(28deg)}
+.tape.t2{bottom:70px;left:-40vw;transform:rotate(-16deg)}
+.scrap{position:absolute;width:190px;padding:14px 16px;background:#E9E4D8;box-shadow:0 10px 20px rgba(0,0,0,.5);display:grid;gap:9px;opacity:.82}
+.scrap b{font-family:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;font-weight:400;font-size:.9rem;color:#1F3A8A}
+.scrap i{display:block;height:2px;background:#9FB4D8}
+.scrap i.h{background:linear-gradient(90deg,#E85B4F 0 60%,#9FB4D8 60%)}
+.scrap.s1{left:-60px;top:44%;transform:rotate(-12deg)}
+.scrap.s2{right:-50px;bottom:22%;transform:rotate(9deg)}
+.scrap.s3{left:22%;bottom:-70px;transform:rotate(21deg);width:150px}
+.polaroid{position:absolute;width:120px;padding:8px 8px 26px;background:#F3F1EA;box-shadow:0 10px 18px rgba(0,0,0,.55);opacity:.85}
+.polaroid div{height:96px;background:radial-gradient(circle at 40% 35%,#6B7680,#2B3238 60%,#151A1E)}
+.polaroid span{position:absolute;bottom:5px;left:0;right:0;text-align:center;font-family:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;font-size:.75rem;color:#333}
+.polaroid.p1{right:3%;top:58%;transform:rotate(-8deg)}
+.polaroid.p2{left:3%;top:16%;transform:rotate(11deg)}
+.polaroid.p2 div{background:radial-gradient(circle at 50% 45%,#1d1d1d 30%,#3a3a3a 31%,#5a5248 70%)}
+.marker{position:absolute;width:34px;height:30px;background:var(--tape);clip-path:polygon(50% 0,100% 100%,0 100%);display:grid;place-items:end center;padding-bottom:2px;font-family:var(--sans);font-weight:800;font-size:.95rem;color:#111;filter:drop-shadow(0 4px 4px rgba(0,0,0,.6))}
+.marker.m1{left:4%;top:72%}.marker.m2{right:6%;top:30%}.marker.m3{left:44%;bottom:2%}.marker.m4{right:24%;bottom:6%}
+.ring{position:absolute;width:90px;height:90px;border-radius:50%;border:7px solid rgba(70,40,18,.55);filter:blur(.6px)}
+.ring.r1{left:7%;top:58%}.ring.r2{right:12%;top:9%;width:70px;height:70px;border-width:5px}
+.glass{position:absolute;width:150px;left:9%;bottom:14%;fill:rgba(200,225,235,.14);stroke:rgba(230,245,250,.4);stroke-width:1}
+.chair{position:absolute;width:260px;right:-40px;bottom:-30px;opacity:.75;transform:rotate(-8deg)}
+@media (max-width:1050px){#room .scrap,#room .polaroid,#room .chair{display:none}.tape{height:30px}.tape span{font-size:.85rem}}
+
+/* Portada sobre fondo oscuro */
+.case-no{color:#FF8A7E}
+.cover h1{color:var(--light);text-shadow:0 4px 30px rgba(0,0,0,.6)}
+.cover h1 span{color:#8FB0FF}
+.credit{color:var(--light-2)}
+/* Cabecera */
+#hdr{background:rgba(14,11,9,.88);border-bottom:1px solid rgba(255,255,255,.08);color:var(--light)}
+.brand .logo{background:var(--tape);color:#111}
+.brand small{color:var(--light-2)}
+.track span{background:rgba(255,255,255,.14)}
+.track span.done{background:var(--light)}
+.track b{color:var(--light-2)}
+.clock{background:#000;color:#FF5A4A;border:1px solid #3A0F0B;text-shadow:0 0 10px rgba(255,90,74,.6)}
+.clock.warn{background:#000;color:#FFB020}
+.clock.danger{background:#2a0705;color:#FF5A4A}
+.iconbtn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:var(--light)}
+/* Expediente: carpeta sobre la mesa */
+.file .body,.file .tab{box-shadow:0 20px 40px rgba(0,0,0,.55)}
+/* Lateral: tablón de corcho */
+aside.side .sheet{background-color:var(--cork);border:10px solid #5B3E22;border-radius:3px;
+  background-image:radial-gradient(rgba(0,0,0,.18) 1px,transparent 1.5px),radial-gradient(rgba(255,230,190,.15) 1px,transparent 1.5px);background-size:7px 7px,11px 11px;background-position:0 0,3px 5px;
+  box-shadow:0 20px 40px rgba(0,0,0,.55),inset 0 0 30px rgba(0,0,0,.35)}
+.side h3{display:inline-block;background:#F4F1E8;padding:3px 12px;transform:rotate(-1.5deg);box-shadow:0 3px 6px rgba(0,0,0,.35)}
+.kit-grid button{position:relative;box-shadow:0 3px 6px rgba(0,0,0,.3);border-color:transparent}
+.kit-grid button::before{content:"";position:absolute;top:-5px;left:50%;width:11px;height:11px;margin-left:-5px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FF8E80,#C0281C 60%,#7a130b);box-shadow:0 2px 3px rgba(0,0,0,.5)}
+.kit-grid button:nth-child(odd){transform:rotate(-1deg)}.kit-grid button:nth-child(even){transform:rotate(1.2deg)}
+.thumbs button{border:none;border-radius:1px;background:#F3F1EA;padding:4px 4px 16px;box-shadow:0 5px 10px rgba(0,0,0,.45);aspect-ratio:3/4.4}
+.thumbs button:nth-child(3n+1){transform:rotate(-3deg)}.thumbs button:nth-child(3n+2){transform:rotate(2deg)}.thumbs button:nth-child(3n){transform:rotate(-1deg)}
+.thumbs button:hover{transform:rotate(0) scale(1.05);z-index:2}
+.thumbs span{background:none;color:#333;bottom:1px;text-align:center}
+.thumbs img{height:100%}
+
+/* ════════ Victoria: portada de periódico ════════ */
+#victory{padding:40px 16px 80px;overflow-x:hidden}
+.paper{max-width:1080px;margin:0 auto;background:#F2EDE1;color:#151311;padding:26px 34px 30px;box-shadow:0 40px 80px rgba(0,0,0,.7);position:relative;
+  background-image:radial-gradient(ellipse at 20% 10%,rgba(255,255,255,.5),transparent 60%),radial-gradient(ellipse at 90% 90%,rgba(140,110,60,.12),transparent 60%);
+  animation:spinIn 1.1s cubic-bezier(.2,.9,.3,1.05) both}
+@keyframes spinIn{0%{transform:rotate(-720deg) scale(.05);opacity:0}70%{opacity:1}100%{transform:rotate(-1deg) scale(1)}}
+.np-top{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:#4a443b}
+.np-top .ed{background:#151311;color:#F2EDE1;padding:2px 8px}
+.np-mast{font-family:'UnifrakturMaguntia',serif;font-size:clamp(2.6rem,7.5vw,5.4rem);line-height:1;text-align:center;margin:8px 0 4px}
+.np-line{display:flex;justify-content:space-between;gap:12px;border-top:3px double #151311;border-bottom:1px solid #151311;padding:5px 2px;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:.9rem}
+.np-head{font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:clamp(2.6rem,7.8vw,5.6rem);line-height:.95;text-align:center;letter-spacing:-.01em;margin:20px 0 10px;text-transform:uppercase}
+.np-deck{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:clamp(1.1rem,2.2vw,1.45rem);line-height:1.3;text-align:center;max-width:46ch;margin:0 auto 18px}
+.np-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:26px;border-top:1px solid #151311;padding-top:16px}
+.np-photo{margin:0 0 14px}
+.np-photo svg{display:block;width:100%;height:auto;filter:sepia(.35) contrast(1.05);border:1px solid #151311}
+.np-photo figcaption{font-family:var(--sans);font-size:.82rem;color:#3f3a33;padding-top:5px;border-bottom:1px solid #b9b1a2;padding-bottom:6px}
+.np-photo figcaption b{font-weight:800}
+.np-body{columns:2;column-gap:24px;column-rule:1px solid #c9c1b0;font-family:Georgia,'Times New Roman',serif;font-size:1rem;line-height:1.5;text-align:justify;hyphens:auto}
+.np-body p{margin:0 0 .7em}
+.np-body .by{font-family:var(--sans);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;text-align:left;margin-bottom:.5em}
+.np-body .lead::first-letter{float:left;font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:3.9em;line-height:.8;padding:4px 6px 0 0}
+.np-side{display:grid;gap:16px;align-content:start}
+.np-box{border:1px solid #151311;padding:12px 14px}
+.np-box h3{margin:0 0 6px;font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:1.25rem;border-bottom:2px solid #151311;padding-bottom:4px}
+.np-keys{margin:0;padding:0;list-style:none;font-family:Georgia,serif;font-size:.92rem}
+.np-keys li{display:grid;grid-template-columns:26px 1fr;padding:4px 0;border-bottom:1px dotted #8b8375}
+.np-keys li:last-child{border:0}
+.np-keys b{font-family:'Playfair Display',Georgia,serif;font-weight:900;color:#B3261E}
+.np-stats{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:0;font-family:Georgia,serif}
+.np-stats dd{margin:0;font-family:var(--mono)}
+.np-stats .off{font-weight:700;border-top:1px solid #151311;padding-top:5px;font-size:1.1rem}
+.np-bar{text-align:center}
+.np-bar svg{width:100%;max-width:230px;height:64px;display:block;margin:0 auto}
+.np-bar b{font-family:var(--mono);font-size:1.25rem;letter-spacing:.14em}
+.np-bar small{display:block;font-family:var(--sans);font-size:.75rem;color:#4a443b}
+.np-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px;border-top:3px double #151311;padding-top:10px;font-family:Georgia,serif;font-size:.88rem}
+.np-foot b{display:block;font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:1rem}
+.paper .stamp2{position:absolute;right:30px;top:270px;border:4px double #B3261E;color:#B3261E;font-family:var(--sans);font-weight:800;font-stretch:72%;font-size:1.5rem;text-transform:uppercase;padding:2px 12px;transform:rotate(9deg);opacity:.85;letter-spacing:.05em}
+#victory .end-actions .btn.ghost{color:var(--light);border-color:rgba(255,255,255,.35)}
+@media (max-width:820px){@keyframes spinIn{0%{transform:rotate(-720deg) scale(.05);opacity:0}70%{opacity:1}100%{transform:none}}.np-grid{grid-template-columns:1fr}.np-body{columns:1}.np-foot{grid-template-columns:1fr}.paper{padding:18px 16px}.paper .stamp2{position:static;display:inline-block;margin:4px 0 0}.np-top .mid{display:none}}
+@media (prefers-reduced-motion:reduce){.paper{animation:none;transform:rotate(-1deg)}}
+@media print{#room,body::before{display:none}body,html{background:#fff !important;background-image:none !important}.paper{box-shadow:none;animation:none;transform:none;background:#fff}}
+
+</style>
+</head>
+<body>
+<noscript><p style="padding:2rem">Este escape room necesita JavaScript activado.</p></noscript>
+<div id="room" aria-hidden="true">
+  <div class="tape t1"><span>NO PASAR · ESCENA DEL CRIMEN · POLICÍA · NO PASAR · ESCENA DEL CRIMEN · POLICÍA · NO PASAR · ESCENA DEL CRIMEN · POLICÍA ·</span></div>
+  <div class="tape t2"><span>POLICÍA · NO PASAR · ESCENA DEL CRIMEN · POLICÍA · NO PASAR · ESCENA DEL CRIMEN · POLICÍA · NO PASAR · ESCENA DEL CRIMEN ·</span></div>
+  <div class="scrap s1"><b>OmniCorp — reunión 14/03</b><i></i><i></i><i></i><i class="h"></i><i></i><i></i></div>
+  <div class="scrap s2"><b>¿Quién es Cuervo?</b><i></i><i></i><i class="h"></i><i></i></div>
+  <div class="scrap s3"><i></i><i></i><i></i><i></i><i></i><i class="h"></i><i></i></div>
+  <div class="polaroid p1"><div></div><span>E. V. — Ankara?</span></div>
+  <div class="polaroid p2"><div></div><span>Ramsés</span></div>
+  <div class="marker m1">1</div><div class="marker m2">2</div><div class="marker m3">3</div><div class="marker m4">4</div>
+  <div class="ring r1"></div><div class="ring r2"></div>
+  <svg class="glass" viewBox="0 0 160 120"><path d="M20 60 52 44 47 52 40 74 30 70Z"/><path d="M72 30 99 26 92 36 86 52Z"/><path d="M58 84 88 72 84 82 79 101 66 96Z"/><path d="M112 62 141 55 133 70 125 86Z"/><path d="M8 100 27 93 22 104 19 113Z"/><path d="M96 92 106 88 103 97Z"/></svg>
+  <svg class="chair" viewBox="0 0 220 200"><g fill="none" stroke="#0b0907" stroke-width="12" stroke-linecap="round"><path d="M30 150 170 120"/><path d="M50 146 70 40M150 124 170 20M70 40 170 20"/><path d="M90 136 110 190M160 122 190 170"/></g></svg>
+</div>
+<section id="intro">
+  <div class="cover">
+    <div class="case-no">Agencia de seguridad · Nivel de acceso Alfa · Operación Cipher</div>
+    <h1>El rastro de<span>Elena Vega</span></h1>
+    <article class="folder">
+      <div class="stamp">Confidencial</div>
+      <p>Buenos días, equipo. Os escribimos desde una agencia de seguridad que prefiere seguir en el anonimato.</p>
+      <p><strong>Elena Vega</strong>, una de las mejores periodistas de investigación del país, ha desaparecido. Estaba a punto de publicar un reportaje sobre la corporación tecnológica <mark>OmniCorp</mark>.</p>
+      <p>Antes de desaparecer dejó un rastro de pistas en su ordenador, su apartamento y sus notas. Cada pista resuelta desbloquea la siguiente. La última nos dirá dónde la tienen.</p>
+      <p>Tenéis 60 minutos antes de que OmniCorp borre las pruebas.</p>
+    </article>
+  </div>
+  <div class="join sheet">
+    <h2>Equipo de investigación</h2>
+    <form id="startForm" autocomplete="off">
+      <label for="teamName">Nombre del equipo</label>
+      <input id="teamName" class="field" maxlength="32" placeholder="Por ejemplo: Sección de Datos" required>
+      <button class="btn" type="submit">Aceptar la misión</button>
+    </form>
+    <ul>
+      <li>En el kit de investigación tenéis las herramientas: disco César, Morse, binario, mezclador RGB, localizador de IP y mapa.</li>
+      <li>Las evidencias (fotos, diagramas y recortes) se amplían con un clic.</li>
+      <li>Tenéis 3 pistas gratis. Después, cada pista resta 2 minutos.</li>
+      <li>Gana el equipo que encuentre a Elena en menos tiempo.</li>
+    </ul>
+  </div>
+  <div class="credit" id="credit">Escape room creado por Juan Luis Torralbo Muñoz · 4.º ESO</div>
+</section>
+
+<header id="hdr" class="hidden">
+  <div class="brand" id="brand"><div class="logo">EV</div><div><b>El rastro de Elena Vega</b><small id="teamLabel"></small></div></div>
+  <div class="track" id="track"></div>
+  <div class="hdr-right">
+    <div class="clock" id="clock"><span id="timer">60:00</span></div>
+    <button class="iconbtn" id="soundBtn" aria-label="Sonido"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="w" d="M16.5 8.5a5 5 0 0 1 0 7"/><path class="w" d="M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+  </div>
+</header>
+
+<div id="game" class="hidden">
+  <main id="stage"></main>
+  <aside class="side">
+    <div class="kit sheet"><h3>Kit de investigación</h3><div class="kit-grid" id="kit"></div></div>
+    <div class="evid sheet"><h3>Evidencias</h3><div class="thumbs" id="thumbs"></div></div>
+  </aside>
+</div>
+<section id="victory" class="hidden"></section>
+<div id="overlayRoot"></div>
+
+<script>window.__D="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";</script>
+<script>
+'use strict';
+/* ════════════════════════════════════════════════════════════════
+   EL RASTRO DE ELENA VEGA · Escape room
+   Autor: Juan Luis Torralbo Muñoz
+   Respuestas y pistas cifradas en __D.
+   ════════════════════════════════════════════════════════════════ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+const pad = n => String(n).padStart(2, '0');
+const fmt = ms => { const s = Math.max(0, Math.round(ms / 1000)); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); };
+const GAME_MS = 60 * 60 * 1000, KEY = 'ev.partida.v2', SOUND_KEY = 'ev.sonido';
+function cyrb53(str, seed = 0) { let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed; for (let i = 0; i < str.length; i++) { const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909); return 4294967296 * (2097151 & h2) + (h1 >>> 0); }
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
+const DATA = (() => { const key = 'OmniCorp-Proyecto-VIRUS-Nodo'; const bin = atob(window.__D); const out = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i) ^ key.charCodeAt(i % key.length); return JSON.parse(new TextDecoder().decode(out)); })();
+const isAns = (id, v) => DATA.answers[id].some(a => norm(a) === norm(v));
+const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+/* Sonido */
+const Sound = {
+  ctx: null, on: store.get(SOUND_KEY) !== false,
+  init() { if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; } try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } },
+  tone(f, t0, d, type = 'sine', v = .12, a = .005) { if (!this.ctx || !this.on) return; const o = this.ctx.createOscillator(), g = this.ctx.createGain(); o.type = type; o.frequency.setValueAtTime(f, t0); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + a); g.gain.setValueAtTime(v, t0 + Math.max(a, d - .01)); g.gain.linearRampToValueAtTime(0, t0 + d); o.connect(g); g.connect(this.ctx.destination); o.start(t0); o.stop(t0 + d + .05); return o; },
+  sfx(n) {
+    this.init(); if (!this.ctx || !this.on) return; const t = this.ctx.currentTime;
+    if (n === 'ok') [660, 880, 1320].forEach((f, i) => this.tone(f, t + i * .08, .14, 'square', .05));
+    if (n === 'bad') { this.tone(220, t, .18, 'square', .05); this.tone(165, t + .2, .25, 'square', .05); }
+    if (n === 'click') this.tone(1800, t, .03, 'square', .02);
+    if (n === 'pen') this.tone(300, t, .5, 'sawtooth', .05);
+    if (n === 'win') [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone(f, t + i * .14, .4, 'triangle', .1));
+    if (n === 'lose') [392, 330, 262].forEach((f, i) => this.tone(f, t + i * .3, .5, 'triangle', .1));
+  },
+  morse(code) { this.init(); if (!this.ctx) return; const u = .09; let t = this.ctx.currentTime + .05; const was = this.on; this.on = true; for (const ch of code) { if (ch === '.') { this.tone(700, t, u, 'sine', .12); t += u * 2; } else if (ch === '-') { this.tone(700, t, u * 3, 'sine', .12); t += u * 4; } else t += u * 4; } this.on = was; },
+  toggle() { this.on = !this.on; store.set(SOUND_KEY, this.on); paintSound(); }
+};
+function paintSound() { const b = $('#soundBtn'); b.setAttribute('aria-label', Sound.on ? 'Silenciar' : 'Activar el sonido'); $$('.w', b).forEach(p => p.style.opacity = Sound.on ? 1 : .15); }
+
+/* Estado */
+let S = null;
+const save = () => { if (S) store.set(KEY, S); };
+function newState(team) { const now = Date.now(); return { v: 2, team, startedAt: now, deadline: now + GAME_MS, penalties: 0, phase: 'play', cur: 0, solved: [], hints: {}, tokensUsed: 0, wrong: {}, lockUntil: {}, finishedAt: null, shift: 0, bits: [0, 0, 0, 0, 0, 0, 0, 0], rgb: [0, 0, 0], map: { pins: [], strokes: [], join: true } }; }
+const remaining = () => S ? S.deadline - Date.now() : GAME_MS;
+
+/* Ventanas */
+function overlay(html, closable = true, cls = '') { const d = document.createElement('div'); d.className = 'overlay'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-modal', 'true'); d.innerHTML = `<div class="modal ${cls}">${html}</div>`; $('#overlayRoot').appendChild(d); d._prev = document.activeElement; if (closable) { d._esc = true; d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-close]')) closeOverlay(d); }); } const f = d.querySelector('[data-close],button,input'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 40); return d; }
+function closeOverlay(d) { if (!d || !d.parentNode) return; d.remove(); if (d._prev && d._prev.focus) d._prev.focus({ preventScroll: true }); }
+function closeAll() { $$('#overlayRoot > *').forEach(d => d.remove()); }
+function confirmBox(title, text, ok, fn) { const d = overlay(`<h2>${esc(title)}</h2><p>${esc(text)}</p><div class="actions"><button class="btn ghost" data-close>Cancelar</button><button class="btn" id="okBtn">${esc(ok)}</button></div>`); $('#okBtn', d).addEventListener('click', () => { closeOverlay(d); fn(); }); }
+const closeBtn = '<button class="btn ghost small x" data-close>Cerrar</button>';
+
+/* Reloj */
+let tickT = null;
+function tick() { if (!S) return; const r = S.phase === 'won' ? S.deadline - S.finishedAt : S.phase === 'lost' ? 0 : remaining(); $('#timer').textContent = fmt(r); $('#clock').classList.toggle('warn', r <= 600e3 && r > 300e3); $('#clock').classList.toggle('danger', r <= 300e3 && S.phase !== 'won'); if (!['won', 'lost'].includes(S.phase) && r <= 0) lose(); }
+function penalize(sec, why) { S.deadline -= sec * 1000; S.penalties += sec; save(); const f = document.createElement('div'); f.className = 'penalty-fly'; f.textContent = '−' + fmt(sec * 1000) + (why ? ' ' + why : ''); $('#clock').appendChild(f); setTimeout(() => f.remove(), 1800); Sound.sfx('pen'); tick(); }
+
+/* Pistas y bloqueo */
+const hKey = () => 'p' + (S.cur + 1);
+function paintHints() {
+  const k = hKey(), list = DATA.hints[k] || [], n = S.hints[k] || 0, b = $('#hintBtn'); if (!b) return;
+  $('#hints').innerHTML = list.slice(0, n).map(h => `<div class="hint"><b>${esc(h.who)}</b>${esc(h.text)}</div>`).join('');
+  const free = 3 - S.tokensUsed;
+  if (n >= list.length) { b.disabled = true; b.textContent = 'No hay más pistas aquí'; return; }
+  b.disabled = false; b.innerHTML = free > 0 ? `Pedir una pista <span class="tokens">${[0, 1, 2].map(i => `<i class="${i < free ? 'on' : ''}"></i>`).join('')}</span>` : 'Pedir una pista (−2:00)';
+  b.onclick = () => { const go = () => { if (S.tokensUsed < 3) S.tokensUsed++; else penalize(120, 'pista'); S.hints[k] = n + 1; save(); paintHints(); Sound.sfx('click'); }; if (S.tokensUsed < 3) go(); else confirmBox('¿Pedir otra pista?', 'Ya habéis gastado las tres pistas gratis. Esta os costará 2 minutos.', 'Pedir pista (−2:00)', go); };
+}
+let lockT = null;
+function paintLock() { clearInterval(lockT); const k = hKey(); const upd = () => { const left = Math.ceil(((S.lockUntil[k] || 0) - Date.now()) / 1000); $$('.check').forEach(b => { b.disabled = left > 0; b.textContent = left > 0 ? `Esperad ${left} s` : b.dataset.label; }); if (left <= 0) clearInterval(lockT); }; upd(); lockT = setInterval(upd, 250); }
+const locked = () => (S.lockUntil[hKey()] || 0) > Date.now();
+function fail(msg, input) { const k = hKey(); S.wrong[k] = (S.wrong[k] || 0) + 1; const n = S.wrong[k]; if (n >= 2) S.lockUntil[k] = Date.now() + Math.min(5 * (n - 1), 20) * 1000; save(); Sound.sfx('bad'); const fb = $('#fb'); if (fb) { fb.className = 'feedback'; fb.textContent = msg; } if (input) { input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake'); } paintLock(); }
+
+/* Evidencias y kit */
+const EVID = [['gato', 'Evidencia 1', 'Póster del gato'], ['puertos', 'Evidencia 2', 'Diagrama de puertos'], ['islandia', 'Recorte A', 'Reikiavik Herald'], ['rusia', 'Recorte B', 'Moscow Tech Report'], ['nigeria', 'Recorte C', 'Lagos Digital Times'], ['indonesia', 'Recorte D', 'Jakarta Post Tech']];
+const TOOLS = [
+  ['caesar', 'Disco César', '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 3v4"/>'],
+  ['morse', 'Código Morse', '<circle cx="5" cy="12" r="1.6"/><path d="M9 12h5"/><circle cx="18" cy="12" r="1.6"/>'],
+  ['binary', 'Binario a decimal', '<path d="M5 7v10M9 7h3v10H9zM16 7v10M19 7v10"/>'],
+  ['rgb', 'Mezclador RGB', '<circle cx="9" cy="10" r="5"/><circle cx="15" cy="10" r="5"/><circle cx="12" cy="15" r="5"/>'],
+  ['ip', 'Localizador de IP', '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>'],
+  ['map', 'Mapa del mundo', '<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>']
+];
+function renderSide() {
+  $('#kit').innerHTML = TOOLS.map(([id, n, p]) => `<button type="button" data-tool="${id}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${p}</svg>${n}</button>`).join('');
+  $('#thumbs').innerHTML = EVID.map(([f, t, n]) => `<button type="button" data-img="${f}" aria-label="${t}: ${n}"><img src="img/${f}.jpg" alt="" loading="lazy"><span>${t}</span></button>`).join('');
+}
+function openImg(f) { const e = EVID.find(x => x[0] === f) || [f, '', '']; overlay(`${closeBtn}<h2>${esc(e[2] || 'Evidencia')}</h2><div class="lightbox"><img src="img/${f}.jpg" alt="${esc(e[2])}"></div>`, true, 'wide'); }
+function openTool(id) { ({ caesar: toolCaesar, morse: toolMorse, binary: toolBinary, rgb: toolRGB, ip: toolIP, map: toolMap })[id](); }
+document.addEventListener('click', e => { const t = e.target.closest('[data-tool]'); if (t) { openTool(t.dataset.tool); return; } const i = e.target.closest('[data-img]'); if (i) openImg(i.dataset.img); });
+
+function toolCaesar() {
+  const d = overlay(`${closeBtn}<h2>Disco César</h2><p class="muted">Anillo exterior: letra original. Anillo interior: letra cifrada. Girad el anillo interior hasta el desplazamiento de la clave y buscad cada letra cifrada.</p>
+    <div class="ctl"><button class="btn ghost small" id="cl" aria-label="Girar a la izquierda">◀</button><span>Desplazamiento <output id="cs"></output></span><button class="btn ghost small" id="cr" aria-label="Girar a la derecha">▶</button></div><svg class="disc" id="disc" viewBox="0 0 400 400"></svg>`);
+  const paint = () => {
+    const c = 200, step = 360 / 26; let s = `<circle cx="200" cy="200" r="192" fill="#14181B"/><circle cx="200" cy="200" r="150" fill="#FAFBFA"/><circle cx="200" cy="200" r="104" fill="#E6E9E7"/><polygon points="200,2 193,16 207,16" fill="#F4E04A"/>`;
+    for (let i = 0; i < 26; i++) { const a = (i * step - 90) * Math.PI / 180; s += `<text x="${c + 172 * Math.cos(a)}" y="${c + 172 * Math.sin(a)}" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono,monospace" font-size="16" font-weight="600" fill="#F4E04A">${ALPHA[i]}</text>`; }
+    for (let j = 0; j < 26; j++) { const a = ((j - S.shift) * step - 90) * Math.PI / 180; s += `<text x="${c + 127 * Math.cos(a)}" y="${c + 127 * Math.sin(a)}" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono,monospace" font-size="15" font-weight="600" fill="#1F4FD8">${ALPHA[j]}</text>`; }
+    s += `<text x="200" y="196" text-anchor="middle" font-family="Archivo,sans-serif" font-weight="800" font-size="18" fill="#14181B">CÉSAR</text><text x="200" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#4A5358">exterior = original</text>`;
+    $('#disc', d).innerHTML = s; $('#cs', d).textContent = S.shift;
+  };
+  $('#cl', d).addEventListener('click', () => { S.shift = (S.shift + 25) % 26; save(); Sound.sfx('click'); paint(); });
+  $('#cr', d).addEventListener('click', () => { S.shift = (S.shift + 1) % 26; save(); Sound.sfx('click'); paint(); });
+  paint();
+}
+const MORSE = { A: '.-', B: '-...', C: '-.-.', D: '-..', E: '.', F: '..-.', G: '--.', H: '....', I: '..', J: '.---', K: '-.-', L: '.-..', M: '--', N: '-.', O: '---', P: '.--.', Q: '--.-', R: '.-.', S: '...', T: '-', U: '..-', V: '...-', W: '.--', X: '-..-', Y: '-.--', Z: '--..' };
+function toolMorse() { overlay(`${closeBtn}<h2>Código Morse</h2><p class="muted">Punto = señal corta. Raya = señal larga. Cada letra se separa de la siguiente con un espacio.</p><div class="mtable">${Object.entries(MORSE).map(([k, v]) => `<div><b>${k}</b><span>${v.replace(/\./g, '·').replace(/-/g, '−')}</span></div>`).join('')}</div>`, true, 'wide'); }
+function toolBinary() {
+  const d = overlay(`${closeBtn}<h2>Binario a decimal</h2><p class="muted">Pulsad cada bit para cambiarlo entre 0 y 1. Debajo de cada bit está su valor.</p><div class="bits8" id="b8"></div><div class="binout"><span>Decimal</span><b id="bd"></b><button class="btn ghost small" id="br">Poner a cero</button></div>`);
+  const W = [128, 64, 32, 16, 8, 4, 2, 1];
+  const paint = () => { $('#b8', d).innerHTML = W.map((w, i) => `<div><button type="button" class="${S.bits[i] ? 'on' : ''}" data-i="${i}" aria-label="Bit de valor ${w}">${S.bits[i]}</button><small>${w}</small></div>`).join(''); $('#bd', d).textContent = S.bits.reduce((a, b, i) => a + b * W[i], 0); $$('#b8 button', d).forEach(b => b.addEventListener('click', () => { S.bits[+b.dataset.i] ^= 1; save(); Sound.sfx('click'); paint(); })); };
+  $('#br', d).addEventListener('click', () => { S.bits.fill(0); save(); paint(); }); paint();
+}
+function toolRGB() {
+  const d = overlay(`${closeBtn}<h2>Mezclador RGB</h2><p class="muted">Cada canal va de 0 a 255. El código hexadecimal es la forma en que los ordenadores escriben un color.</p><div class="rgbmix"><div>${['R', 'G', 'B'].map((c, i) => `<label><b>${c}</b><input type="range" min="0" max="255" data-i="${i}"><input type="number" min="0" max="255" data-n="${i}"></label>`).join('')}</div><div><div class="swatch" id="sw"></div><div class="hex" id="hx"></div></div></div>`);
+  const hex = () => '#' + S.rgb.map(v => v.toString(16).padStart(2, '0').toUpperCase()).join('');
+  const paint = () => { $$('input[type=range]', d).forEach(r => r.value = S.rgb[r.dataset.i]); $$('input[type=number]', d).forEach(r => r.value = S.rgb[r.dataset.n]); $('#sw', d).style.background = hex(); $('#hx', d).textContent = hex(); };
+  $$('input', d).forEach(r => r.addEventListener('input', () => { const i = +(r.dataset.i ?? r.dataset.n); S.rgb[i] = Math.max(0, Math.min(255, parseInt(r.value, 10) || 0)); save(); paint(); }));
+  paint();
+}
+const IPDB = { '194.44.212.1': ['Ucrania', 'Kiev', '50,45° N', '30,52° E'], '196.188.120.1': ['Etiopía', 'Adís Abeba', '9,03° N', '38,74° E'], '213.13.96.1': ['Portugal', 'Lisboa', '38,72° N', '9,14° O'], '195.189.96.1': ['Azerbaiyán', 'Bakú', '40,41° N', '49,87° E'] };
+function toolIP() {
+  const d = overlay(`${closeBtn}<h2>Localizador de IP</h2><p class="muted">Escribid una dirección IP para ver dónde está el servidor.</p><form class="answer-bar" id="ipf" autocomplete="off"><input class="field code" id="ipi" placeholder="194.44.212.1"><button class="btn">Localizar</button></form><div class="ipres" id="ipr"></div>`);
+  $('#ipf', d).addEventListener('submit', e => {
+    e.preventDefault(); const ip = $('#ipi', d).value.trim(), r = $('#ipr', d); r.innerHTML = '<div class="term"><span class="p">&gt; consultando…</span></div>';
+    setTimeout(() => { const x = IPDB[ip]; r.innerHTML = x ? `<div class="term"><span class="p">IP     </span><span class="a">${esc(ip)}</span><br><span class="p">País   </span><span class="v">${x[0]}</span><br><span class="p">Ciudad </span><span class="v">${x[1]}</span><br><span class="p">Latitud</span> ${x[2]}<br><span class="p">Longit.</span> ${x[3]}</div>` : '<div class="term"><span style="color:#FF8A7E">✕ Esa IP no está en la base de datos.</span></div>'; }, 450);
+  });
+}
+function toolMap() {
+  const d = overlay(`${closeBtn}<h2>Mapa del mundo</h2><div class="maptools"><div class="seg" role="group"><button type="button" data-m="pin" class="on">Chincheta</button><button type="button" data-m="draw">Dibujar</button></div>
+    <div class="swatches">${['#D23B2E', '#1F4FD8', '#14181B', '#2E8B57'].map((c, i) => `<button type="button" data-c="${c}" class="${i ? '' : 'on'}" style="background:${c}" aria-label="Color"></button>`).join('')}</div>
+    <label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="join" ${S.map.join ? 'checked' : ''}> Unir las chinchetas en orden</label>
+    <button class="btn ghost small" type="button" id="undo">Deshacer</button><button class="btn ghost small" type="button" id="clr">Borrar todo</button></div>
+    <div class="mapwrap" id="mw"><img src="img/mapa.jpg" alt="Mapa del mundo" id="mimg"><canvas id="mc"></canvas></div>`, true, 'wide');
+  let mode = 'pin', color = '#D23B2E', drawing = null;
+  const cv = $('#mc', d), cx = cv.getContext('2d'), img = $('#mimg', d);
+  const size = () => { const r = cv.getBoundingClientRect(), k = devicePixelRatio || 1; cv.width = r.width * k; cv.height = r.height * k; cx.setTransform(k, 0, 0, k, 0, 0); paint(); };
+  const paint = () => {
+    const r = cv.getBoundingClientRect(), W = r.width, H = r.height; cx.clearRect(0, 0, W, H); cx.lineCap = cx.lineJoin = 'round';
+    for (const s of S.map.strokes) { cx.strokeStyle = s.c; cx.lineWidth = 3; cx.beginPath(); s.p.forEach(([x, y], i) => i ? cx.lineTo(x * W, y * H) : cx.moveTo(x * W, y * H)); cx.stroke(); }
+    if (S.map.join && S.map.pins.length > 1) { cx.strokeStyle = '#D23B2E'; cx.lineWidth = 2.5; cx.setLineDash([8, 6]); cx.beginPath(); S.map.pins.forEach(([x, y], i) => i ? cx.lineTo(x * W, y * H) : cx.moveTo(x * W, y * H)); cx.stroke(); cx.setLineDash([]); }
+    S.map.pins.forEach(([x, y, c], i) => { cx.fillStyle = c || '#D23B2E'; cx.beginPath(); cx.arc(x * W, y * H, 11, 0, 7); cx.fill(); cx.strokeStyle = '#fff'; cx.lineWidth = 2; cx.stroke(); cx.fillStyle = '#fff'; cx.font = '700 12px Archivo, sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(i + 1, x * W, y * H + .5); });
+  };
+  const pos = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+  cv.addEventListener('pointerdown', e => { e.preventDefault(); const p = pos(e); if (mode === 'pin') { S.map.pins.push([+p[0].toFixed(4), +p[1].toFixed(4), color]); save(); Sound.sfx('click'); paint(); } else { drawing = { c: color, p: [p] }; S.map.strokes.push(drawing); cv.setPointerCapture(e.pointerId); } });
+  cv.addEventListener('pointermove', e => { if (!drawing) return; const p = pos(e); drawing.p.push([+p[0].toFixed(4), +p[1].toFixed(4)]); paint(); });
+  const up = () => { if (drawing) { drawing = null; save(); } }; cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  $$('[data-m]', d).forEach(b => b.addEventListener('click', () => { mode = b.dataset.m; $$('[data-m]', d).forEach(x => x.classList.toggle('on', x === b)); }));
+  $$('[data-c]', d).forEach(b => b.addEventListener('click', () => { color = b.dataset.c; $$('[data-c]', d).forEach(x => x.classList.toggle('on', x === b)); }));
+  $('#join', d).addEventListener('change', e => { S.map.join = e.target.checked; save(); paint(); });
+  $('#undo', d).addEventListener('click', () => { if (mode === 'pin' ? S.map.pins.pop() : S.map.strokes.pop()) { save(); paint(); } });
+  $('#clr', d).addEventListener('click', () => { S.map.pins = []; S.map.strokes = []; save(); paint(); });
+  if (img.complete) size(); else img.addEventListener('load', size);
+  const ro = new ResizeObserver(size); ro.observe(cv);
+}
+
+/* Pruebas */
+const toolBtn = (id, label) => `<button type="button" class="btn ghost small" data-tool="${id}">${label}</button>`;
+const imgBtn = (f, label) => `<button type="button" class="btn ghost small" data-img="${f}">${label}</button>`;
+const PUZ = [
+  { title: 'La contraseña maestra', sub: 'Expediente Vega · pista 001', label: 'Contraseña maestra', body: () => `<div class="doc"><h4>Extracto del diario de Elena Vega</h4><p class="quote">«La presión de la investigación de OmniCorp es cada día más intensa. He reforzado todas mis contraseñas, pero hay una que nunca cambio, mi ancla. Es un homenaje a quien más alegría me ha dado en estos años tan solitarios, <mark>mi leal compañero</mark>. La clave es un recuerdo de <mark>su llegada</mark>.»</p></div><div class="toolrow" style="margin:0 0 14px">${imgBtn('gato', 'Ver la evidencia 1')}</div>` },
+  { title: 'El mensaje cifrado', sub: 'Comunicación interceptada · pista 002', label: 'Nombre del proyecto secreto', body: () => `<div class="doc"><h4>Mensaje del informante, alias Cuervo</h4><p class="quote">«Elena, soy Cuervo. Tengo el nombre en clave del proyecto secreto de OmniCorp, pero he tenido que cifrarlo. La clave es el número de puertos USB tipo A (los rectangulares) del diagrama de tu ordenador. Desplaza cada letra <mark>hacia atrás</mark> en el alfabeto.»</p></div><div class="term"><span class="p">TEXTO CIFRADO &gt;&gt;</span> <span class="v">ZMVYW</span></div><div class="toolrow" style="margin:0 0 14px;justify-content:flex-start">${imgBtn('puertos', 'Ver el diagrama de puertos')}${toolBtn('caesar', 'Abrir el disco César')}</div>` },
+  { title: 'El código binario', sub: 'Protocolo de acceso · pista 003', label: 'Código en decimal', mode: 'numeric', body: () => `<div class="doc"><h4>Protocolo de seguridad del sistema Vega</h4><p>«Generad un número binario de cinco cifras, una por puerto y en este orden. Si la función principal del puerto es el <mark>vídeo</mark>, la cifra es 1; si no, es 0. Después, convertid el binario a decimal.»</p><ol class="ports"><li>HDMI<i>1.ª</i></li><li>VGA<i>2.ª</i></li><li>RJ45 (Ethernet)<i>3.ª</i></li><li>USB-C<i>4.ª</i></li><li>Jack 3,5 mm (audio)<i>5.ª</i></li></ol></div><div class="toolrow" style="margin:0 0 14px;justify-content:flex-start">${toolBtn('binary', 'Abrir el conversor binario')}</div>` },
+  { title: 'El comentario oculto', sub: 'Análisis forense · pista 004', label: 'Palabra clave oculta', body: () => `<div class="doc"><h4>Informe forense: metadatos</h4><p>«Elena escondía datos dentro de sus imágenes. En los metadatos del diagrama de puertos hay un comentario que no aparece a simple vista.»</p></div><div class="term"><span class="p">&gt; analizando metadatos de puertos.jpg…</span><br><span class="p">&gt; comentario oculto:</span> <span class="v">-. --- -.. ---</span></div><div class="toolrow" style="margin:0 0 14px;justify-content:flex-start"><button type="button" class="btn ghost small" id="playMorse">Escuchar la señal</button>${toolBtn('morse', 'Abrir la tabla Morse')}</div>` },
+  { title: 'El mapa del crimen', sub: 'Patrón geográfico · pista 005', label: 'Letra que dibuja el rastro', body: () => `<div class="doc"><h4>Nota de Elena Vega</h4><p class="quote">«Llevo semanas siguiendo a OmniCorp por el mundo. No es casualidad que hayan actuado en esas cuatro ciudades <mark>y en ese orden</mark>. Sé que sabrás seguir el rastro.»</p></div><p class="muted" style="margin:0 0 8px">Los cuatro recortes de prensa están en las evidencias.</p><div class="toolrow" style="margin:0 0 14px;justify-content:flex-start">${imgBtn('islandia', 'Recorte A')}${imgBtn('rusia', 'Recorte B')}${imgBtn('nigeria', 'Recorte C')}${imgBtn('indonesia', 'Recorte D')}${toolBtn('map', 'Abrir el mapa')}</div>` },
+  { title: 'El código del piso franco', sub: 'Registro del apartamento · pista 006', label: 'Siguiente valor, en decimal', mode: 'numeric', body: () => `<div class="doc"><h4>Informe del registro</h4><p>«Pegadas al monitor de Elena había cuatro notas escritas a mano con números romanos. Parecen una secuencia. ¿Cuál sería el siguiente valor?»</p></div><div class="notes">${['IV', 'IX', 'XVI', 'XXV'].map((n, i) => `<div class="sticky" style="--r:${[-4, 3, -2, 5][i]}deg">${n}</div>`).join('')}<div class="sticky" style="--r:-3deg;background:#fff;color:var(--red)">?</div></div>` },
+  { title: 'El código de color', sub: 'Archivo VEG-007 · pista 007', label: 'Código hexadecimal del color', body: () => `<div class="rgb3"><div class="doc" style="--c:#D23B2E"><h4>Acertijo R · componente rojo</h4><p>«Soy los minutos de una hora y media, menos los meses de un año, más los días de la semana.»</p></div><div class="doc" style="--c:#2E8B57"><h4>Acertijo G · componente verde</h4><p>«Soy las letras del alfabeto español, multiplicadas por los planetas del sistema solar y divididas entre dos.»</p></div><div class="doc" style="--c:#1F4FD8"><h4>Acertijo B · componente azul</h4><p>«Soy la suma de los cuadrados de los tres primeros números impares positivos, más los segundos de un minuto.»</p></div></div><div class="toolrow" style="margin:12px 0 14px;justify-content:flex-start">${toolBtn('rgb', 'Abrir el mezclador RGB')}</div>` },
+  { title: 'La triangulación final', sub: 'Servidor hostil · pista 008', label: 'Capital del país', body: () => `<div class="doc"><h4>Último mensaje de Elena · origen desconocido</h4><p class="quote">«El servidor principal de OmniCorp es un fantasma, pero he capturado cuatro de sus IP de retransmisión. Localizadlas en el mapa y trazad dos líneas: una <mark>norte-sur</mark> y otra <mark>este-oeste</mark>. Donde se cruzan está la base. La clave final es la <mark>capital</mark> de ese país.»</p></div><div class="ips">${Object.keys(IPDB).map(ip => `<div>${ip}</div>`).join('')}</div><div class="toolrow" style="margin:14px 0 14px;justify-content:flex-start">${toolBtn('ip', 'Abrir el localizador de IP')}${toolBtn('map', 'Abrir el mapa')}</div>` }
+];
+function renderPuzzle(st) {
+  const P = PUZ[S.cur], id = 'p' + (S.cur + 1);
+  st.innerHTML = `<div class="file"><div class="tab">Pista ${String(S.cur + 1).padStart(3, '0')} de 008</div><div class="body">
+    <h1 class="stage-title">${P.title}</h1><div class="sub">${P.sub}</div>${P.body()}
+    <form class="answer-bar" id="ansForm" autocomplete="off"><input class="field ${id === 'p7' ? 'code' : ''}" id="ans" placeholder="${esc(P.label)}" aria-label="${esc(P.label)}" ${P.mode ? `inputmode="${P.mode}"` : ''} spellcheck="false"><button class="btn check" data-label="Verificar">Verificar</button></form>
+    <div class="feedback" id="fb" role="status"></div>
+    <div class="toolrow"><button class="btn ghost small" id="hintBtn" type="button"></button><span class="muted">El kit y las evidencias están ${innerWidth > 1050 ? 'a la derecha' : 'debajo'}.</span></div><div class="hintbox" id="hints"></div>
+  </div></div>`;
+  const pm = $('#playMorse'); if (pm) pm.addEventListener('click', () => Sound.morse('-. --- -.. ---'));
+  $('#ansForm').addEventListener('submit', e => { e.preventDefault(); if (locked()) return; const v = $('#ans').value; if (!norm(v)) { $('#fb').textContent = 'Escribid una respuesta.'; return; } if (isAns(id, v)) solve(id); else fail('Acceso denegado. Respuesta incorrecta.', $('#ans')); });
+}
+function solve(id) {
+  if (S.solved.includes(id)) return; S.solved.push(id); save(); Sound.sfx('ok'); renderTrack();
+  const i = +id.slice(1) - 1, after = (DATA.after || {})[id] || '';
+  const d = overlay(`<div class="reward"><h2>Clave aceptada</h2><div class="log"><span class="g">✓ pista ${String(i + 1).padStart(3, '0')} verificada</span><br>${esc(after)}</div><div class="actions" style="justify-content:center"><button class="btn" id="nextBtn">${i < 7 ? 'Siguiente pista' : 'Ver el informe final'}</button></div></div>`, false);
+  $('#nextBtn', d).addEventListener('click', () => { closeOverlay(d); if (i < 7) { S.cur = i + 1; save(); renderAll(); } else win(); });
+}
+
+/* Pantallas */
+function show(w) { $('#intro').classList.toggle('hidden', w !== 'intro'); $('#hdr').classList.toggle('hidden', w === 'intro' || w === 'victory'); $('#game').classList.toggle('hidden', w !== 'game'); $('#victory').classList.toggle('hidden', w !== 'victory'); scrollTo({ top: 0, behavior: 'instant' }); }
+function renderTrack() { $('#track').innerHTML = [...Array(8)].map((_, i) => `<span class="${S.solved.includes('p' + (i + 1)) ? 'done' : (S.phase === 'play' && i === S.cur) ? 'now' : ''}"></span>`).join('') + `<b>${S.solved.length} / 8</b>`; }
+function renderAll() {
+  $('#teamLabel').textContent = 'Equipo ' + S.team;
+  if (S.phase === 'won') { renderVictory(); show('victory'); return; }
+  if (S.phase === 'play' && S.solved.includes('p' + (S.cur + 1))) { if (S.cur < 7) { S.cur++; save(); } else { win(); return; } }
+  show('game'); renderTrack(); renderSide();
+  if (S.phase === 'play') { renderPuzzle($('#stage')); paintHints(); paintLock(); } else if (S.phase === 'lost') renderLost($('#stage'));
+  tick();
+}
+
+/* Final */
+function win() { S.phase = 'won'; S.finishedAt = Date.now(); save(); Sound.sfx('win'); closeAll(); renderAll(); }
+function lose() { if (['won', 'lost'].includes(S.phase)) return; S.phase = 'lost'; S.finishedAt = Date.now(); save(); Sound.sfx('lose'); closeAll(); renderAll(); }
+const official = () => (S.finishedAt - S.startedAt) + S.penalties * 1000;
+const vcode = (team, ms) => { const h = cyrb53(`${norm(team)}|${Math.round(ms / 1000)}|${DATA.salt}`).toString(16).toUpperCase().padStart(8, '0').slice(-8); return h.slice(0, 4) + '-' + h.slice(4); };
+/* Victoria: portada del periódico del día siguiente */
+function barcode(code) {
+  let x = 6, bars = ''; const seq = ('*' + code.replace('-', '') + '*').split('');
+  seq.forEach(ch => { const v = parseInt(ch, 36) || 7; for (let k = 0; k < 5; k++) { const w = 1 + ((v >> k) & 1) * 2; if (k % 2 === 0) bars += `<rect x="${x}" y="2" width="${w}" height="56"/>`; x += w + 1.4; } x += 2; });
+  return `<svg viewBox="0 0 ${Math.ceil(x + 6)} 60" preserveAspectRatio="none" aria-hidden="true"><g fill="#151311">${bars}</g></svg>`;
+}
+function newsMap() {
+  /* recorte del mapa del juego (coordenadas en píxeles de img/mapa.jpg, 2200×1121) */
+  const C = { kiev: [1212, 400, 'Kiev'], add: [1268, 600, 'Adís Abeba'], lis: [1017, 470, 'Lisboa'], bak: [1306, 456, 'Bakú'] };
+  const cross = (a, b, c, d) => { const r = [b[0] - a[0], b[1] - a[1]], q = [d[0] - c[0], d[1] - c[1]], t = ((c[0] - a[0]) * q[1] - (c[1] - a[1]) * q[0]) / (r[0] * q[1] - r[1] * q[0]); return [a[0] + t * r[0], a[1] + t * r[1]].map(v => +v.toFixed(1)); };
+  const X = cross(C.kiev, C.add, C.lis, C.bak);
+  const pin = (p, dx, anchor) => `<g><circle cx="${p[0]}" cy="${p[1]}" r="6" fill="#B3261E" stroke="#fff" stroke-width="2"/><text x="${p[0] + dx}" y="${p[1] + 4}" text-anchor="${anchor}" class="nm">${p[2]}</text></g>`;
+  return `<svg viewBox="985 360 360 270" role="img" aria-label="Mapa con las cuatro IP y el cruce en Ankara">
+    <style>.nm{font:700 13px Archivo,Arial,sans-serif;fill:#151311;paint-order:stroke;stroke:#F2EDE1;stroke-width:3px}</style>
+    <image href="img/mapa.jpg" x="0" y="0" width="2200" height="1121"/>
+    <path d="M${C.kiev[0]} ${C.kiev[1]} L${C.add[0]} ${C.add[1]}" stroke="#1F4FD8" stroke-width="3" stroke-dasharray="7 5"/>
+    <path d="M${C.lis[0]} ${C.lis[1]} L${C.bak[0]} ${C.bak[1]}" stroke="#1F4FD8" stroke-width="3" stroke-dasharray="7 5"/>
+    ${pin(C.kiev, 10, 'start')}${pin(C.add, -10, 'end')}${pin(C.lis, 10, 'start')}${pin(C.bak, -10, 'end')}
+    <circle cx="${X[0]}" cy="${X[1]}" r="17" fill="none" stroke="#B3261E" stroke-width="3.5"/><text x="${X[0] - 2}" y="${X[1] + 36}" text-anchor="middle" class="nm" style="font-size:15px;fill:#B3261E">ANKARA</text>
+  </svg>`;
+}
+function renderVictory() {
+  const real = S.finishedAt - S.startedAt, off = official(), hints = Object.values(S.hints).reduce((a, b) => a + b, 0), code = vcode(S.team, off);
+  const d = new Date(S.finishedAt + 864e5), date = d.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const keys = [['RAMSES2021', 'la contraseña de Elena'], ['VIRUS', 'el proyecto secreto'], ['24', 'los puertos de vídeo'], ['NODO', 'el comentario oculto'], ['Z', 'la firma de OmniCorp'], ['36', 'el piso franco'], ['#556C5F', 'el color de los servidores'], ['Ankara', 'la base de OmniCorp']];
+  $('#victory').innerHTML = `<article class="paper">
+    <div class="np-top"><span class="ed">Edición especial</span><span class="mid">Año XXIV · N.º 8.192</span><span>1,50 €</span></div>
+    <div class="np-mast">El Observador</div>
+    <div class="np-line"><span>${date.charAt(0).toUpperCase() + date.slice(1)}</span><span>Diario independiente de la mañana</span></div>
+    <div class="stamp2">Caso cerrado</div>
+    <h1 class="np-head">Elena Vega, liberada</h1>
+    <p class="np-deck">El equipo «${esc(S.team)}» siguió el rastro digital que la periodista escondió en su piso hasta la base secreta de OmniCorp en Ankara</p>
+    <div class="np-grid">
+      <div>
+        <figure class="np-photo">${newsMap()}<figcaption><b>La triangulación.</b> Las líneas Kiev–Adís Abeba y Lisboa–Bakú, trazadas con las IP de retransmisión, se cruzan sobre Ankara.</figcaption></figure>
+        <div class="np-body">
+          <p class="by">Por la redacción · Ankara</p>
+          <p class="lead">La periodista de investigación Elena Vega fue rescatada anoche, sana y salva, en unas instalaciones de OmniCorp a las afueras de Ankara. Su paradero se descubrió gracias al equipo «${esc(S.team)}», que en ${fmt(off)} minutos descifró las pistas que Vega había dejado en su ordenador, en su apartamento y en sus notas.</p>
+          <p>La clave estaba en cuatro servidores de retransmisión. Localizados en Kiev, Adís Abeba, Lisboa y Bakú, permitían trazar dos líneas, una norte-sur y otra este-oeste, que se cruzan en el centro de Turquía. Allí funcionaba el Proyecto VIRUS, el programa secreto que Vega estaba a punto de destapar.</p>
+          <p>Antes, los investigadores tuvieron que adivinar la contraseña de la periodista, descifrar con el disco César el mensaje de su informante, traducir binario y Morse, y descubrir la Z que OmniCorp dibujaba sobre el mapa con sus ataques.</p>
+          <p>Las pruebas ya están en manos de la justicia. El reportaje de Vega se publicará mañana en estas mismas páginas.</p>
+        </div>
+      </div>
+      <aside class="np-side">
+        <div class="np-box"><h3>El caso, en ocho claves</h3><ol class="np-keys">${keys.map((k, i) => `<li><b>${i + 1}</b><span><strong>${k[0]}</strong>, ${k[1]}</span></li>`).join('')}</ol></div>
+        <div class="np-box"><h3>Ficha de la operación</h3><dl class="np-stats"><dt>Tiempo empleado</dt><dd>${fmt(real)}</dd><dt>Penalizaciones</dt><dd>+${fmt(S.penalties * 1000)}</dd><dt>Pistas pedidas</dt><dd>${hints}</dd><dt class="off">Tiempo oficial</dt><dd class="off">${fmt(off)}</dd></dl></div>
+        <div class="np-box np-bar">${barcode(code)}<b>${code}</b><small>Código de verificación · enseñádselo al profesor</small></div>
+      </aside>
+    </div>
+    <div class="np-foot"><div><b>Economía</b>OmniCorp suspende su cotización en bolsa tras el registro de su sede.</div><div><b>Tecnología</b>Cómo proteger tus contraseñas: los expertos desaconsejan usar el nombre de tu mascota.</div><div><b>Mañana</b>El reportaje completo de Elena Vega sobre el Proyecto VIRUS.</div></div>
+  </article>
+  <div class="end-actions"><button class="btn" id="printBtn">Imprimir la portada</button><button class="btn ghost" id="againBtn">Nueva misión</button></div>`;
+  $('#printBtn').addEventListener('click', () => print());
+  $('#againBtn').addEventListener('click', () => confirmBox('¿Empezar una misión nueva?', 'Se borrará esta partida de este ordenador.', 'Empezar de nuevo', resetGame));
+}
+function renderLost(st) {
+  st.innerHTML = `<div id="lost"><div class="modal" style="text-align:center"><h2>El rastro se ha enfriado</h2><p>Se ha acabado el tiempo. OmniCorp ha borrado sus servidores y ha trasladado a Elena a un lugar desconocido.</p><p class="muted">Habéis resuelto ${S.solved.length} de 8 pistas.</p><div class="actions" style="justify-content:center"><button class="btn" id="againBtn">Nueva misión</button></div></div></div>`;
+  $('#againBtn').addEventListener('click', () => confirmBox('¿Empezar una misión nueva?', 'Se borrará esta partida de este ordenador.', 'Empezar de nuevo', resetGame));
+}
+function resetGame() { store.del(KEY); S = null; clearInterval(tickT); closeAll(); show('intro'); $('#teamName').value = ''; }
+
+/* Profesor */
+let teacherOK = false;
+function teacherLogin() { if (teacherOK) { teacherPanel(); return; } const d = overlay(`<h2>Modo profesor</h2><form id="pinForm"><input id="pin" class="field" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off"><div class="feedback" id="pinFb"></div><div class="actions"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn">Entrar</button></div></form>`); $('#pinForm', d).addEventListener('submit', e => { e.preventDefault(); if ($('#pin', d).value === DATA.pin) { teacherOK = true; closeOverlay(d); teacherPanel(); } else $('#pinFb', d).textContent = 'PIN incorrecto.'; }); }
+function teacherPanel() {
+  const active = S && S.phase === 'play', ans = active ? DATA.answers['p' + (S.cur + 1)][0].replace(/^556C5F$/, '#556C5F') : '';
+  const d = overlay(`<h2>Modo profesor</h2><p class="muted">${S ? `Equipo «${esc(S.team)}». Quedan ${fmt(remaining())}.` : 'No hay partida en curso.'}</p><div class="tpanel">
+    ${active ? `<div class="row"><button class="btn small" id="tAns">Ver la respuesta actual</button><button class="btn small" id="tSkip">Saltar esta pista</button></div><div class="row"><button class="btn small ghost" id="tPlus">Añadir 5 minutos</button><button class="btn small ghost" id="tMinus">Quitar 5 minutos</button></div>` : ''}
+    ${S ? '<div class="row"><button class="btn small dark" id="tReset">Borrar la partida</button></div>' : ''}<output id="tOut"></output>
+    <h3 style="font-weight:800;margin:.6em 0 0">Verificar un código de victoria</h3>
+    <div class="row"><input class="field" id="vTeam" placeholder="Equipo" style="flex:2 1 140px"><input class="field" id="vTime" placeholder="mm:ss" style="flex:1 1 80px"><input class="field" id="vCode" placeholder="XXXX-XXXX" style="flex:1 1 120px"><button class="btn small" id="vBtn">Verificar</button></div><output id="vOut"></output></div>
+    <div class="actions"><button class="btn ghost" data-close>Cerrar</button></div>`);
+  const out = $('#tOut', d);
+  if (active) {
+    $('#tAns', d).addEventListener('click', () => out.textContent = ans);
+    $('#tSkip', d).addEventListener('click', () => { closeOverlay(d); solve('p' + (S.cur + 1)); });
+    $('#tPlus', d).addEventListener('click', () => { S.deadline += 300000; S.penalties -= 300; save(); tick(); out.textContent = 'Quedan ' + fmt(remaining()); });
+    $('#tMinus', d).addEventListener('click', () => { S.deadline -= 300000; S.penalties += 300; save(); tick(); out.textContent = 'Quedan ' + fmt(remaining()); });
+  }
+  if ($('#tReset', d)) $('#tReset', d).addEventListener('click', () => { closeOverlay(d); confirmBox('¿Borrar la partida?', 'Se perderá todo el progreso en este ordenador.', 'Borrar', resetGame); });
+  $('#vBtn', d).addEventListener('click', () => { const m = $('#vTime', d).value.match(/(\d+)\D+(\d+)/); if (!m) { $('#vOut', d).textContent = 'Escribid el tiempo como mm:ss.'; return; } $('#vOut', d).textContent = vcode($('#vTeam', d).value, (+m[1] * 60 + +m[2]) * 1000) === $('#vCode', d).value.trim().toUpperCase() ? '✓ Código válido.' : '✕ El código no coincide.'; });
+}
+let clicks = 0;
+document.addEventListener('click', e => { if (!e.target.closest('#credit,#brand')) return; clicks++; clearTimeout(window._ck); window._ck = setTimeout(() => clicks = 0, 1500); if (clicks >= 5) { clicks = 0; teacherLogin(); } });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { const o = $$('#overlayRoot > *').pop(); if (o && o._esc) { closeOverlay(o); return; } }
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'P' || e.key === 'p')) { e.preventDefault(); teacherLogin(); }
+});
+
+/* Arranque */
+function begin() { Sound.init(); paintSound(); clearInterval(tickT); tickT = setInterval(tick, 250); renderAll(); }
+$('#startForm').addEventListener('submit', e => { e.preventDefault(); const t = $('#teamName').value.trim(); if (!t) return; S = newState(t); save(); begin(); });
+$('#soundBtn').addEventListener('click', () => { Sound.init(); Sound.toggle(); });
+(function boot() {
+  paintSound(); const saved = store.get(KEY);
+  if (!saved || saved.v !== 2) { show('intro'); return; }
+  S = saved;
+  if (!['won', 'lost'].includes(S.phase) && remaining() <= 0) { S.phase = 'lost'; S.finishedAt = S.deadline; save(); }
+  if (!['won', 'lost'].includes(S.phase)) {
+    show('intro');
+    const d = overlay(`<h2>Hay una misión en curso</h2><p>El equipo «${esc(S.team)}» tiene una partida a medias en este ordenador. Quedan ${fmt(remaining())}: el reloj ha seguido corriendo.</p><div class="actions"><button class="btn ghost" id="rNew">Empezar de cero</button><button class="btn" id="rGo">Continuar</button></div>`, false);
+    $('#rGo', d).addEventListener('click', () => { closeOverlay(d); begin(); });
+    $('#rNew', d).addEventListener('click', () => { closeOverlay(d); resetGame(); });
+  } else begin();
+})();
+
+/* Linterna: la luz sigue al puntero por el piso */
+(() => { let raf = 0; addEventListener('pointermove', e => { if (raf) return; raf = requestAnimationFrame(() => { raf = 0; document.body.style.setProperty('--mx', e.clientX + 'px'); document.body.style.setProperty('--my', e.clientY + 'px'); }); }, { passive: true }); })();
+
+</script>
+</body>
+</html>
